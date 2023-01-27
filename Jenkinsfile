@@ -1,28 +1,18 @@
-pipeline 
-{
-	agent none
-  stages 
-  {
-  	stage('Maven Install') 
-    {
-    	agent 
-      {
-      	docker {
-        	image 'maven:3.5.0'
-        }
-      }
-      steps 
-      {
-      	sh 'mvn clean install'
+pipeline {
+  agent { label "linux" }
+  stages {
+    stage("build") {
+      steps {
+        sh """
+          docker build -t hello_there .
+        """
       }
     }
-    stage('Docker Build') 
-    {
-    	agent any
-      steps 
-      {
-        echo "building docker image"
-      	//sh 'docker build -t  .'
+    stage("run") {
+      steps {
+        sh """
+          docker run --rm hello_there
+        """
       }
     }
   }
